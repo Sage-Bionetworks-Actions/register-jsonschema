@@ -19,20 +19,16 @@ def main() -> 1 | 0:
     """
     Main function to generate JSON schemas from data models.
     Expects the following environment variables:
-    - VERSION: Semantic version (e.g., '1.0.0')
     - ORG_NAME: Organization name
     - SCHEMA_DIR: Directory containing JSON schemas
+    - VERSION: Semantic version (e.g., '1.0.0') (optional)
     - SYNAPSE_AUTH_TOKEN: Synapse Personal Access Token
 
     """
-    version = os.environ.get("VERSION")
     org_name = os.environ.get("ORG_NAME")
     schema_dir = os.environ.get("SCHEMA_DIR")
+    version = os.environ.get("VERSION", None)
     synapse_pat = os.getenv("SYNAPSE_AUTH_TOKEN", None)
-
-    if not version:
-        print("::error:: VERSION environment variable is required", file=sys.stderr)
-        return 1
 
     if not org_name:
         print("::error:: ORG_NAME environment variable is required", file=sys.stderr)
@@ -53,7 +49,7 @@ def main() -> 1 | 0:
 def register_schemas_from_directory(
     org_name: str,
     schema_dir: str,
-    version: str,
+    version: str | None,
     synapse_pat: str | None
 ) -> 1 | 0:
     """
@@ -74,7 +70,7 @@ def register_schemas_from_directory(
     print(f"Schema Directory: {schema_dir}")
     print(f"{'='*60}\n")
 
-    if version.startswith('v'):
+    if version and version.startswith('v'):
         version = version[1:]
 
     syn = Synapse()
@@ -128,7 +124,7 @@ def register_schemas_from_directory(
 
 
 def register_schema(
-    syn: Synapse, json_file: Path, org_name: str, version: str
+    syn: Synapse, json_file: Path, org_name: str, version: str | None
 ) -> JSONSchema | None:
     """
     Register a single JSON schema to Synapse.
@@ -148,7 +144,7 @@ def register_schema(
     schema_name = json_file.name.replace('.json', '')
 
     print(f"  Schema Name: {schema_name}")
-    print(f"  Version: {version}")
+    print(f"  Version: {str(version)}")
 
     try:
         schema = register_jsonschema(
@@ -159,7 +155,7 @@ def register_schema(
             synapse_client=syn
         )
 
-        print(f"✓ Registered: {schema_name} version {version}")
+        print(f"✓ Registered: {schema_name} version {str(version)}")
         return schema
 
     except Exception as e:
