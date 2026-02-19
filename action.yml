@@ -31,4 +31,4 @@ runs:
     ORG_NAME: ${{ inputs.org-name }}
     VERSION: ${{ inputs.version }}
     SCHEMA_DIR: ${{ inputs.schema-dir }}
-    SYNAPSE_AUTH_TOKEN: ${{ secrets.SYNAPSE_AUTH_TOKEN }}
+    SYNAPSE_AUTH_TOKEN: xxx
