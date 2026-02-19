@@ -18,7 +18,7 @@ inputs:
     required: false
   synapse_auth_token:
     description: 'Synapse Personal Access Token with permissions to register schemas in the Synapse organization'
-    required: true
+    required: false
 
 outputs:
   uris:
