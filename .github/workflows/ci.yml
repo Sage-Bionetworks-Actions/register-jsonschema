@@ -57,6 +57,7 @@ jobs:
             --env ORG_NAME="${{ env.ORG_NAME }}" \
             --env VERSION="${{ env.VERSION }}" \
             --env SCHEMA_DIR="${{ env.SCHEMA_DIR }}" \
+            --env SYNAPSE_AUTH_TOKEN="${{ secrets.SYNAPSE_AUTH_TOKEN }}" \
             --rm ${{ env.TEST_TAG }}
 
   test-action:
