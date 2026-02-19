@@ -179,6 +179,7 @@ def register_schema(
 
 if __name__ == "__main__":
     result = main()
+
     if result == 1:
         sys.exit(1)
     sys.exit(0)
