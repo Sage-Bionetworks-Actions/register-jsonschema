@@ -70,6 +70,10 @@ def register_schemas_from_directory(
     print(f"\n{'='*60}")
     print("JSON Schema Registration")
     print(f"{'='*60}")
+    if synapse_pat:
+        print("Synapse PAT is set")
+    else:
+        print("Synapse PAT is not set")
     print(f"Organization: {org_name}")
     print(f"Version: {version}")
     print(f"Schema Directory: {schema_dir}")
