@@ -49,10 +49,14 @@ jobs:
       - name: Run the Container
         id: run
         env:
-          INPUT_WHO_TO_GREET: Mona Lisa Octocat
+          ORG_NAME: test-org
+          VERSION: 1.0.0
+          SCHEMA_DIR: tests/schema_dir
         run: |
           docker run \
-            --env INPUT_WHO_TO_GREET="${{ env.INPUT_WHO_TO_GREET }}" \
+            --env ORG_NAME="${{ env.ORG_NAME }}" \
+            --env VERSION="${{ env.VERSION }}" \
+            --env SCHEMA_DIR="${{ env.SCHEMA_DIR }}" \
             --rm ${{ env.TEST_TAG }}
 
   test-action:
@@ -68,8 +72,6 @@ jobs:
         id: test-action
         uses: ./
         with:
-          who-to-greet: Mona Lisa Octocat
-
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.greeting }}"
+          org-name: test-org
+          version: 1.0.0
+          schema-dir: tests/schema_dir

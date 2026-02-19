@@ -22,3 +22,5 @@ Thumbs.db
 # IDE files
 .idea
 *.code-workspace
+
+__pycache__/
