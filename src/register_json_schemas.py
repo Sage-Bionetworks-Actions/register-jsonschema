@@ -15,7 +15,7 @@ from synapseclient.models import JSONSchema, SchemaOrganization
 from synapseclient.extensions.curator import register_jsonschema
 
 
-def main() -> 1 | 0:
+def main() -> None:
     """
     Main function to generate JSON schemas from data models.
     Expects the following environment variables:
@@ -34,13 +34,13 @@ def main() -> 1 | 0:
 
     if not org_name:
         print("::error:: ORG_NAME environment variable is required", file=sys.stderr)
-        return 1
+        sys.exit(1)
 
     if not schema_dir:
         print("::error:: SCHEMA_DIR environment variable is required", file=sys.stderr)
-        return 1
+        sys.exit(1)
 
-    return register_schemas_from_directory(
+    register_schemas_from_directory(
         org_name=org_name,
         schema_dir=schema_dir,
         version=version,
@@ -55,7 +55,7 @@ def register_schemas_from_directory(
     version: str | None,
     synapse_pat: str | None,
     github_output: str | None
-) -> 1 | 0:
+) -> None:
     """
     Register all JSON schemas from a directory.
 
@@ -91,17 +91,17 @@ def register_schemas_from_directory(
     except Exception as e:
         print(f"::error:: Organization not found: {org_name}", file=sys.stderr)
         print(f"::error:: {str(e)}", file=sys.stderr)
-        return 1
+        sys.exit(1)
 
     schema_dir = Path(schema_dir)
     if not schema_dir.exists():
         print(f"::error:: Schema directory not found: {schema_dir}", file=sys.stderr)
-        return 1
+        sys.exit(1)
 
     json_files = list(schema_dir.glob("*.json"))
     if not json_files:
         print(f"::error:: No JSON files found in: {schema_dir}", file=sys.stderr)
-        return 1
+        sys.exit(1)
 
     print(f"Found {len(json_files)} JSON schema file(s)\n")
 
@@ -134,13 +134,12 @@ def register_schemas_from_directory(
     print(f"{'='*60}")
 
     if failed_count > 0:
-        return 1
-    return 0
+        sys.exit(1)
 
 
 def register_schema(
     syn: Synapse, json_file: Path, org_name: str, version: str | None
-) -> JSONSchema | None:
+) -> JSONSchema:
     """
     Register a single JSON schema to Synapse.
 
@@ -151,7 +150,7 @@ def register_schema(
         version: Semantic version (e.g., '1.0.0')
 
     Returns:
-        JSONSchema object if successful, None otherwise
+        JSONSchema object if successful
     """
 
     print(f"Processing: {json_file.name}")
@@ -175,8 +174,9 @@ def register_schema(
 
     except Exception as e:
         print(f"::error:: {json_file}: Failed to register: {str(e)}", file=sys.stderr)
-        return None
+        sys.exit(1)
 
 
 if __name__ == "__main__":
     main()
+    sys.exit(0)
