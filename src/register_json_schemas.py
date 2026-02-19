@@ -7,7 +7,6 @@ The semantic version is passed as a parameter, NOT included in the schema name.
 
 import os
 import json
-import re
 import sys
 from pathlib import Path
 
@@ -22,10 +21,13 @@ def main() -> 1 | 0:
     - VERSION: Semantic version (e.g., '1.0.0')
     - ORG_NAME: Organization name
     - SCHEMA_DIR: Directory containing JSON schemas
+    - SYNAPSE_AUTH_TOKEN: Synapse Personal Access Token (optional)
+
     """
     version = os.environ.get("VERSION")
     org_name = os.environ.get("ORG_NAME")
     schema_dir = os.environ.get("SCHEMA_DIR")
+    synapse_pat = os.getenv("SYNAPSE_AUTH_TOKEN", None)
 
     if not version:
         print("::error:: VERSION environment variable is required", file=sys.stderr)
@@ -43,6 +45,7 @@ def main() -> 1 | 0:
         org_name=org_name,
         schema_dir=schema_dir,
         version=version,
+        synapse_pat=synapse_pat
     )
 
 
@@ -50,6 +53,7 @@ def register_schemas_from_directory(
     org_name: str,
     schema_dir: str,
     version: str,
+    synapse_pat: str | None
 ) -> 1 | 0:
     """
     Register all JSON schemas from a directory.
@@ -58,9 +62,8 @@ def register_schemas_from_directory(
         org_name: Organization name
         schema_dir: Directory containing JSON schemas
         version: Semantic version (e.g., '1.0.0')
+        synapse_pat: Synapse Personal Access Token
     """
-    syn = Synapse()
-    syn.login()
 
     print(f"\n{'='*60}")
     print("JSON Schema Registration")
@@ -72,6 +75,12 @@ def register_schemas_from_directory(
 
     if version.startswith('v'):
         version = version[1:]
+
+    syn = Synapse()
+    if synapse_pat:
+        syn.login(authToken=synapse_pat)
+    else:
+        syn.login()
 
     try:
         org = SchemaOrganization(name=org_name)
