@@ -126,7 +126,7 @@ class TestRegisterJsonSchemas:
         assert main() == 1
 
         captured = capsys.readouterr()
-        assert "::error:: tests/non_schema_dir/Patient.json: Failed to load: Expecting value: line 1 column 1 (char 0)" in captured.err
+        assert "::error:: tests/non_schema_dir/Patient.json: Failed to register: Expecting value: line 1 column 1 (char 0)" in captured.err
 
     def test_malformed_json(self, monkeypatch, capsys) -> None:
         """Integration test for registering JSON schemas from a directory."""

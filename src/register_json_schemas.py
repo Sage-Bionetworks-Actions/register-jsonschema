@@ -12,6 +12,7 @@ from pathlib import Path
 
 from synapseclient import Synapse
 from synapseclient.models import JSONSchema, SchemaOrganization
+from synapseclient.extensions.curator import register_jsonschema
 
 
 def main() -> 1 | 0:
@@ -21,7 +22,7 @@ def main() -> 1 | 0:
     - VERSION: Semantic version (e.g., '1.0.0')
     - ORG_NAME: Organization name
     - SCHEMA_DIR: Directory containing JSON schemas
-    - SYNAPSE_AUTH_TOKEN: Synapse Personal Access Token (optional)
+    - SYNAPSE_AUTH_TOKEN: Synapse Personal Access Token
 
     """
     version = os.environ.get("VERSION")
@@ -144,31 +145,21 @@ def register_schema(
 
     print(f"Processing: {json_file.name}")
 
-    try:
-        with open(json_file, 'r') as f:
-            schema_body = json.load(f)
-    except Exception as e:
-        print(f"::error:: {json_file}: Failed to load: {str(e)}", file=sys.stderr)
-        return None
-
     schema_name = json_file.name.replace('.json', '')
 
     print(f"  Schema Name: {schema_name}")
     print(f"  Version: {version}")
 
     try:
-        schema = JSONSchema(
+        schema = register_jsonschema(
+            schema_path=str(json_file),
             organization_name=org_name,
-            name=schema_name
-        )
-
-        schema.store(
-            schema_body=schema_body,
-            version=version,
+            schema_name=schema_name,
+            schema_version=version,
             synapse_client=syn
         )
-        print(f"✓ Registered: {schema_name} version {version}")
 
+        print(f"✓ Registered: {schema_name} version {version}")
         return schema
 
     except Exception as e:
