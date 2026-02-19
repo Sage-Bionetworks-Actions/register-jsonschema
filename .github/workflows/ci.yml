@@ -49,7 +49,7 @@ jobs:
       - name: Run the Container
         id: run
         env:
-          ORG_NAME: test-org
+          ORG_NAME: dpetest
           VERSION: 1.0.0
           SCHEMA_DIR: tests/schema_dir
         run: |
