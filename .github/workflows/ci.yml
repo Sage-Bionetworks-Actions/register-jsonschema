@@ -73,8 +73,7 @@ jobs:
         id: test-action
         uses: ./
         with:
-          org-name: test-org
-          version: 1.0.0
+          org-name: dpetest
           schema-dir: tests/schema_dir
           synapse_auth_token: ${{ secrets.SYNAPSE_AUTH_TOKEN }}
 
