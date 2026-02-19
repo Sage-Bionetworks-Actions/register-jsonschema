@@ -1,5 +1,5 @@
-# Using develop branch for IsTemplate column of CSV
-FROM ghcr.io/sage-bionetworks/synapsepythonclient:develop-fcf371f9bdeeaa8cf4ec0ea7c2446b7d20f35577
+# Using develop branch for register json schema function
+FROM ghcr.io/sage-bionetworks/synapsepythonclient:develop-184718b7262d20d6742f1ffe86fb86a94cc48fae
 
 # Copy requirements and install dependencies
 RUN pip install --no-cache-dir synapseclient[curator]
