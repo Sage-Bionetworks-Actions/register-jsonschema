@@ -121,7 +121,9 @@ def register_schemas_from_directory(
     if github_output:
         uris = [schema.uri for schema in results if schema is not None]
         with open(github_output, 'a') as file:
+            file.write("uris<<EOF\n")
             file.write('\n'.join(uris))
+            file.write("\nEOF\n")
 
     print(f"{'='*60}")
     print("Registration Summary")

@@ -17,6 +17,10 @@ inputs:
     description: 'Path to directory containing JSON schema files'
     required: true
 
+outputs:
+  uris:
+    description: 'URIs of registered schemas'
+
 runs:
   using: docker
   image: Dockerfile

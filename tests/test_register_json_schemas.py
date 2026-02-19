@@ -70,6 +70,7 @@ class TestRegisterJsonSchemas:
         assert main() == 0
         captured = capsys.readouterr()
         assert "Registered: Patient version 1.0.0" in captured.out
+        assert "Registered: Biospecimen version 1.0.0" in captured.out
         assert os.path.exists(text_file_path)
 
     def test_success_no_version_env_var(self, monkeypatch, capsys) -> None:
