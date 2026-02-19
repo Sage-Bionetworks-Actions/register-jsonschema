@@ -43,6 +43,19 @@ def empty_folder_path(request) -> str:
     return directory_path
 
 
+@pytest.fixture(scope="function")
+def text_file_path(request) -> str:
+    """Create an empty folder for testing."""
+    path = "text.txt"
+
+    def cleanup():
+        if os.path.exists(path):
+            os.remove(path)
+
+    request.addfinalizer(cleanup)
+    return path
+
+
 class TestRegisterJsonSchemas:
 
     @pytest.fixture(autouse=True, scope="function")
@@ -51,11 +64,13 @@ class TestRegisterJsonSchemas:
         monkeypatch.setenv('VERSION', 'v1.0.0')
         monkeypatch.setenv('SCHEMA_DIR', './tests/schema_dir')
 
-    def test_success(self, capsys) -> None:
+    def test_success(self, monkeypatch, capsys, text_file_path: str) -> None:
         """Integration test for registering JSON schemas from a directory."""
+        monkeypatch.setenv('GITHUB_OUTPUT', text_file_path)
         assert main() == 0
         captured = capsys.readouterr()
         assert "Registered: Patient version 1.0.0" in captured.out
+        assert os.path.exists(text_file_path)
 
     def test_success_no_version_env_var(self, monkeypatch, capsys) -> None:
         """Integration test for registering JSON schemas from a directory."""

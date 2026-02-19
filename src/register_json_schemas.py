@@ -23,12 +23,14 @@ def main() -> 1 | 0:
     - SCHEMA_DIR: Directory containing JSON schemas
     - VERSION: Semantic version (e.g., '1.0.0') (optional)
     - SYNAPSE_AUTH_TOKEN: Synapse Personal Access Token
+    - GITHUB_OUTPUT: GitHub Actions output file path (optional)
 
     """
     org_name = os.environ.get("ORG_NAME")
     schema_dir = os.environ.get("SCHEMA_DIR")
     version = os.environ.get("VERSION", None)
     synapse_pat = os.getenv("SYNAPSE_AUTH_TOKEN", None)
+    github_output = os.environ.get('GITHUB_OUTPUT', None)
 
     if not org_name:
         print("::error:: ORG_NAME environment variable is required", file=sys.stderr)
@@ -42,7 +44,8 @@ def main() -> 1 | 0:
         org_name=org_name,
         schema_dir=schema_dir,
         version=version,
-        synapse_pat=synapse_pat
+        synapse_pat=synapse_pat,
+        github_output=github_output
     )
 
 
@@ -50,7 +53,8 @@ def register_schemas_from_directory(
     org_name: str,
     schema_dir: str,
     version: str | None,
-    synapse_pat: str | None
+    synapse_pat: str | None,
+    github_output: str | None
 ) -> 1 | 0:
     """
     Register all JSON schemas from a directory.
@@ -60,6 +64,7 @@ def register_schemas_from_directory(
         schema_dir: Directory containing JSON schemas
         version: Semantic version (e.g., '1.0.0')
         synapse_pat: Synapse Personal Access Token
+        github_output: GitHub Actions output file path
     """
 
     print(f"\n{'='*60}")
@@ -103,12 +108,20 @@ def register_schemas_from_directory(
     success_count = 0
     failed_count = 0
 
+    results = []
     for json_file in sorted(json_files):
         result = register_schema(syn, json_file, org_name, version)
+        results.append(result)
+
         if result:
             success_count += 1
         else:
             failed_count += 1
+
+    if github_output:
+        uris = [schema.uri for schema in results if schema is not None]
+        with open(github_output, 'a') as file:
+            file.write('\n'.join(uris))
 
     print(f"{'='*60}")
     print("Registration Summary")
