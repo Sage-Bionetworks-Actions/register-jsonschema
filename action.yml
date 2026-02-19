@@ -16,9 +16,9 @@ inputs:
   version:
     description: 'Semantic version of the schemas being registered'
     required: false
-  synapse_auth_token:
-    description: 'Synapse Personal Access Token with permissions to register schemas in the Synapse organization'
-    required: false
+  #synapse_auth_token:
+  #  description: 'Synapse Personal Access Token with permissions to register schemas in the Synapse organization'
+  #  required: false
 
 outputs:
   uris:
@@ -31,4 +31,4 @@ runs:
     ORG_NAME: ${{ inputs.org-name }}
     VERSION: ${{ inputs.version }}
     SCHEMA_DIR: ${{ inputs.schema-dir }}
-    SYNAPSE_AUTH_TOKEN: "xxx"
+    SYNAPSE_AUTH_TOKEN: ${{ secrets.SYNAPSE_AUTH_TOKEN }}
