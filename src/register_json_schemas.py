@@ -6,7 +6,6 @@ The semantic version is passed as a parameter, NOT included in the schema name.
 """
 
 import os
-import json
 import sys
 from pathlib import Path
 
@@ -179,4 +178,7 @@ def register_schema(
 
 
 if __name__ == "__main__":
-    main()
+    result = main()
+    if result == 1:
+        sys.exit(1)
+    sys.exit(0)
