@@ -54,7 +54,7 @@ jobs:
           SCHEMA_DIR: schema_dir
         run: |
           docker run \
-            - v tests/schema_dir:/schema_dir
+            -v $(pwd)/tests/schema_dir:/schema_dir \
             --env ORG_NAME="${{ env.ORG_NAME }}" \
             --env VERSION="${{ env.VERSION }}" \
             --env SCHEMA_DIR="${{ env.SCHEMA_DIR }}" \
@@ -77,5 +77,3 @@ jobs:
           org-name: dpetest
           schema-dir: tests/schema_dir
           synapse_auth_token: ${{ secrets.SYNAPSE_AUTH_TOKEN }}
-
-
