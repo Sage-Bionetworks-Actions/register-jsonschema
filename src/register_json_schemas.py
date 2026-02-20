@@ -27,10 +27,6 @@ def main() -> None:
     - VERSION: Semantic version (e.g., '1.0.0')
     - GITHUB_OUTPUT: JSON schema URIs will be appended to this
         file in GitHub Actions output format.
-
-
-
-
     """
     org_name = os.environ.get("ORG_NAME")
     schema_dir = os.environ.get("SCHEMA_DIR")
