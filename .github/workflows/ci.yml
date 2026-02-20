@@ -51,9 +51,10 @@ jobs:
         env:
           ORG_NAME: dpetest
           VERSION: 1.0.0
-          SCHEMA_DIR: tests/schema_dir
+          SCHEMA_DIR: schema_dir
         run: |
           docker run \
+            - v tests/schema_dir:/schema_dir
             --env ORG_NAME="${{ env.ORG_NAME }}" \
             --env VERSION="${{ env.VERSION }}" \
             --env SCHEMA_DIR="${{ env.SCHEMA_DIR }}" \
