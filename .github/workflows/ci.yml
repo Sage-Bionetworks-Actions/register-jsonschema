@@ -12,6 +12,36 @@ permissions:
   contents: read
 
 jobs:
+
+  test-code:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        # install version with reigster json schema function
+        # install curator packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install git+https://github.com/Sage-Bionetworks/synapsePythonClient@184718b7262d20d6742f1ffe86fb86a94cc48fae
+          pip install pytest inflection networkx pandarallel pandas rdflib
+
+      - name: Run Tests
+        env:
+          SYNAPSE_AUTH_TOKEN: ${{ secrets.SYNAPSE_AUTH_TOKEN }}
+        run: |
+          python -m pytest tests -v
+
+
   test-docker:
     name: Docker Tests
     runs-on: ubuntu-latest
