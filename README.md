@@ -21,45 +21,20 @@ steps:
 
 ## Inputs
 
-| Name | Description | Required |
-| --- | --- | --- | --- |
-| `org-name` | Your Synapse username. | Yes |
-| `schema-dir` | Your Synapse password or Personal Access Token (PAT). | Yes |
-| `version` | The local path to the JSON schema file to be registered. | No |
-| `synapse-auth-token` | A description for the schema being registered. | Yes |
+| Input | Description | Required |
+| :--- | :--- | :--- |
+| `org-name` | Name of the Synapse organization to register schemas in. | `true` |
+| `schema-dir` | Path to directory containing JSON schema files. | `true` |
+| `version` | Semantic version of the schemas being registered. | `false` |
+| `synapse-auth-token` | Synapse Personal Access Token with permissions to register schemas in the Synapse organization. | `true` |
 
----
+## Outputs
+
+| Output | Description |
+| :--- | :--- |
+| `uris` | URIs of registered schemas. |
 
 ## Example Workflow
-
-The following example workflow starts with JSON Schema in a directory and registers them to Synapse.
-
-```yaml
-name: CI
-
-on:
-  push:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        id: checkout
-        uses: actions/checkout@v4
-
-      - name: Register JSON Schema
-        id: register
-        uses: Sage-Bionetworks-Actions/register-jsonschema@v1
-        with:
-          org-name: your_org_name
-          schema-dir: your_schema_directory
-          synapse_auth_token: ${{ secrets.SYNAPSE_AUTH_TOKEN }}
-          version: 1.0.0
-
-
-```
 
 The following example demonstrates a full workflow that generates a schema using the companion action and then registers it to Synapse.
 
@@ -87,12 +62,11 @@ jobs:
 
       - name: Register JSON Schemas
         id: register
-        uses: ./
+        uses: Sage-Bionetworks-Actions/register-jsonschema@v1
         with:
           org-name: dpetest
           schema-dir: ${{ steps.generate.outputs.schemas}}
           synapse-auth-token: ${{ secrets.SYNAPSE_AUTH_TOKEN }}
-
 
 ```
 
