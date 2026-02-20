@@ -21,16 +21,25 @@ def main() -> None:
     Expects the following environment variables:
     - ORG_NAME: Organization name
     - SCHEMA_DIR: Directory containing JSON schemas
-    - VERSION: Semantic version (e.g., '1.0.0') (optional)
-    - SYNAPSE_AUTH_TOKEN: Synapse Personal Access Token
-    - GITHUB_OUTPUT: GitHub Actions output file path (optional)
+
+    Can use the following optional environment variables:
+    - VERSION: Semantic version (e.g., '1.0.0')
+    - SYNAPSE_AUTH_TOKEN: Synapse Personal Access Token.
+      - Not required for testing.
+      - In production, the  this should be set.
+    - GITHUB_OUTPUT: GitHub Actions output file path.
+      - If set, the script will append the registered schema URIs to this
+        file in GitHub Actions output format.
+
 
     """
     org_name = os.environ.get("ORG_NAME")
     schema_dir = os.environ.get("SCHEMA_DIR")
     version = os.environ.get("VERSION", None)
-    synapse_pat = os.getenv("SYNAPSE_AUTH_TOKEN", None)
     github_output = os.environ.get('GITHUB_OUTPUT', None)
+
+    syn = Synapse()
+    syn.login()
 
     if not org_name:
         print("::error:: ORG_NAME environment variable is required", file=sys.stderr)
@@ -40,37 +49,10 @@ def main() -> None:
         print("::error:: SCHEMA_DIR environment variable is required", file=sys.stderr)
         sys.exit(1)
 
-    register_schemas_from_directory(
-        org_name=org_name,
-        schema_dir=schema_dir,
-        version=version,
-        synapse_pat=synapse_pat,
-        github_output=github_output
-    )
-
-
-def register_schemas_from_directory(
-    org_name: str,
-    schema_dir: str,
-    version: str | None,
-    synapse_pat: str | None,
-    github_output: str | None
-) -> None:
-    """
-    Register all JSON schemas from a directory.
-
-    Args:
-        org_name: Organization name
-        schema_dir: Directory containing JSON schemas
-        version: Semantic version (e.g., '1.0.0')
-        synapse_pat: Synapse Personal Access Token
-        github_output: GitHub Actions output file path
-    """
-
     print(f"\n{'='*60}")
     print("JSON Schema Registration")
     print(f"{'='*60}")
-    if synapse_pat:
+    if os.environ.get("SYNAPSE_AUTH_TOKEN"):
         print("Synapse PAT is set")
     else:
         print("Synapse PAT is not set")
@@ -81,12 +63,6 @@ def register_schemas_from_directory(
 
     if version and version.startswith('v'):
         version = version[1:]
-
-    syn = Synapse()
-    if synapse_pat:
-        syn.login(authToken=synapse_pat)
-    else:
-        syn.login()
 
     try:
         org = SchemaOrganization(name=org_name)
