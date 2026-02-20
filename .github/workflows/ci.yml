@@ -116,7 +116,6 @@ jobs:
         id: checkout
         uses: actions/checkout@v6
 
-      - uses: actions/checkout@v6
       - name: Generate JSON Schemas
         id: generate
         uses: Sage-Bionetworks-Actions/generate-jsonschema@main
@@ -125,7 +124,7 @@ jobs:
           data-model-labels: "display_label"
 
       - name: Register JSON Schemas
-        id: test-action
+        id: register
         uses: ./
         with:
           org-name: dpetest
