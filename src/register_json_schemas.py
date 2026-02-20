@@ -23,10 +23,10 @@ def main() -> None:
     - SCHEMA_DIR: Directory containing JSON schemas
     - SYNAPSE_AUTH_TOKEN: Synapse Personal Access Token.
       - Not required for local testing.
-    - GITHUB_OUTPUT: JSON schema URIs will be appended to this
-        file in GitHub Actions output format.
     Can use the following optional environment variables:
     - VERSION: Semantic version (e.g., '1.0.0')
+    - GITHUB_OUTPUT: JSON schema URIs will be appended to this
+        file in GitHub Actions output format.
 
 
 
@@ -34,7 +34,7 @@ def main() -> None:
     """
     org_name = os.environ.get("ORG_NAME")
     schema_dir = os.environ.get("SCHEMA_DIR")
-    github_output = os.environ.get('GITHUB_OUTPUT')
+    github_output = os.environ.get('GITHUB_OUTPUT', None)
     synapse_pat = os.environ.get("SYNAPSE_AUTH_TOKEN", None)
     version = os.environ.get("VERSION", None)
 
@@ -98,11 +98,12 @@ def main() -> None:
         else:
             failed_count += 1
 
-    uris = [schema.uri for schema in results if schema is not None]
-    with open(github_output, 'a') as file:
-        file.write("uris<<EOF\n")
-        file.write('\n'.join(uris))
-        file.write("\nEOF\n")
+    if github_output:
+        uris = [schema.uri for schema in results if schema is not None]
+        with open(github_output, 'a') as file:
+            file.write("uris<<EOF\n")
+            file.write('\n'.join(uris))
+            file.write("\nEOF\n")
 
     print(f"{'='*60}")
     print("Registration Summary")
