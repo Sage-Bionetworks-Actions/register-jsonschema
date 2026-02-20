@@ -80,13 +80,11 @@ jobs:
         id: run
         env:
           ORG_NAME: dpetest
-          VERSION: 1.0.0
           SCHEMA_DIR: /schema_dir
         run: |
           docker run \
             -v $(pwd)/tests/schema_dir:/schema_dir \
             --env ORG_NAME="${{ env.ORG_NAME }}" \
-            --env VERSION="${{ env.VERSION }}" \
             --env SCHEMA_DIR="${{ env.SCHEMA_DIR }}" \
             --env SYNAPSE_AUTH_TOKEN="${{ secrets.SYNAPSE_AUTH_TOKEN }}" \
             --rm ${{ env.TEST_TAG }}
