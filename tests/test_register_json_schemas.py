@@ -63,26 +63,35 @@ def text_file_path(request) -> str:
 class TestRegisterJsonSchemas:
 
     @pytest.fixture(autouse=True, scope="function")
-    def init(self, monkeypatch, schema_organization: SchemaOrganization, synapse_client: Synapse) -> None:
+    def init(
+        self,
+        monkeypatch,
+        schema_organization: SchemaOrganization,
+        text_file_path: str
+    ) -> None:
         monkeypatch.setenv('ORG_NAME', schema_organization.name)
         monkeypatch.setenv('VERSION', 'v1.0.0')
         monkeypatch.setenv('SCHEMA_DIR', './tests/schema_dir')
-
-    def test_success(self, monkeypatch, capsys, text_file_path: str) -> None:
-        """Integration test for registering JSON schemas from a directory."""
         monkeypatch.setenv('GITHUB_OUTPUT', text_file_path)
+
+    def test_success(self, capsys, text_file_path: str) -> None:
+        """Integration test for registering JSON schemas from a directory."""
         main()
         captured = capsys.readouterr()
         assert "Registered: Patient version 1.0.0" in captured.out
         assert "Registered: Biospecimen version 1.0.0" in captured.out
         assert os.path.exists(text_file_path)
 
-    def test_success_no_version_env_var(self, monkeypatch, capsys) -> None:
+    def test_success_no_version_env_var(
+        self, monkeypatch, capsys, text_file_path: str
+    ) -> None:
         """Integration test for registering JSON schemas from a directory."""
         monkeypatch.delenv('VERSION', raising=False)
         main()
         captured = capsys.readouterr()
         assert "Registered: Patient version None" in captured.out
+        assert "Registered: Biospecimen version None" in captured.out
+        assert os.path.exists(text_file_path)
 
     def test_no_org_env_var(self, monkeypatch, capsys) -> None:
         """Integration test for registering JSON schemas from a directory."""
