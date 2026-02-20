@@ -23,4 +23,8 @@ Thumbs.db
 .idea
 *.code-workspace
 
+# Python cache files
 __pycache__/
+
+# VSCode settings and workspace files
+.vscode/
