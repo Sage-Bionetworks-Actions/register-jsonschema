@@ -1,26 +1,34 @@
-name: The name of your action here
-description: Provide a description here
-author: Your name or organization here
+name: Register JSON Schema
+description: Register JSON Schema files with Synapse using the Synapse Python client. This action is intended to be used in conjunction with the Generate JSON Schemas action, which generates JSON Schema files from a data model and outputs the path to the generated schema files as well as a JSON string containing an array of schema dictionaries for use with PR comment actions.
+author: Sage Bionetworks
 
-# Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
-  icon: heart
-  color: red
+  icon: file-text
+  color: blue
 
-# Define your inputs here.
 inputs:
-  who-to-greet:
-    description: Your input description here
+  org-name:
+    description: 'Name of the Synapse organization to register schemas in'
     required: true
-    default: World
+  schema-dir:
+    description: 'Path to directory containing JSON schema files'
+    required: true
+  version:
+    description: 'Semantic version of the schemas being registered'
+    required: false
+  synapse-auth-token:
+    description: 'Synapse Personal Access Token with permissions to register schemas in the Synapse organization'
+    required: true
 
-# Define your outputs here.
 outputs:
-  greeting:
-    description: Your output description here
+  uris:
+    description: 'URIs of registered schemas'
 
 runs:
   using: docker
   image: Dockerfile
   env:
-    INPUT_WHO_TO_GREET: ${{ inputs.who-to-greet }}
+    ORG_NAME: ${{ inputs.org-name }}
+    VERSION: ${{ inputs.version }}
+    SCHEMA_DIR: ${{ inputs.schema-dir }}
+    SYNAPSE_AUTH_TOKEN: ${{ inputs.synapse-auth-token }}

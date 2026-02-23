@@ -1,11 +1,14 @@
-# Set the base image to use for subsequent instructions
-FROM alpine:3.23
+# Using develop branch for register json schema function
+FROM ghcr.io/sage-bionetworks/synapsepythonclient:develop-184718b7262d20d6742f1ffe86fb86a94cc48fae
 
-# Set the working directory inside the container
-WORKDIR /usr/src
+# Copy requirements and install dependencies
+RUN pip install --no-cache-dir synapseclient[curator]
 
-# Copy any source file(s) required for the action
-COPY entrypoint.sh .
+# Copy Python script
+COPY src/register_json_schemas.py /usr/local/bin/register_json_schemas.py
 
-# Configure the container to be run as an executable
-ENTRYPOINT ["/usr/src/entrypoint.sh"]
+# Set working directory to GitHub workspace
+WORKDIR /github/workspace
+
+# Set entrypoint to Python script
+ENTRYPOINT ["python", "/usr/local/bin/register_json_schemas.py"]

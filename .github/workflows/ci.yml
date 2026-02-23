@@ -12,6 +12,36 @@ permissions:
   contents: read
 
 jobs:
+
+  test-code:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        # install version with reigster json schema function
+        # install curator packages
+        run: |
+          python -m pip install --upgrade pip
+          pip install git+https://github.com/Sage-Bionetworks/synapsePythonClient@184718b7262d20d6742f1ffe86fb86a94cc48fae
+          pip install pytest inflection networkx pandarallel pandas rdflib
+
+      - name: Run Tests
+        env:
+          SYNAPSE_AUTH_TOKEN: ${{ secrets.SYNAPSE_AUTH_TOKEN }}
+        run: |
+          python -m pytest tests -v
+
+
   test-docker:
     name: Docker Tests
     runs-on: ubuntu-latest
@@ -49,10 +79,14 @@ jobs:
       - name: Run the Container
         id: run
         env:
-          INPUT_WHO_TO_GREET: Mona Lisa Octocat
+          ORG_NAME: dpetest
+          SCHEMA_DIR: /schema_dir
         run: |
           docker run \
-            --env INPUT_WHO_TO_GREET="${{ env.INPUT_WHO_TO_GREET }}" \
+            -v $(pwd)/tests/schema_dir:/schema_dir \
+            --env ORG_NAME="${{ env.ORG_NAME }}" \
+            --env SCHEMA_DIR="${{ env.SCHEMA_DIR }}" \
+            --env SYNAPSE_AUTH_TOKEN="${{ secrets.SYNAPSE_AUTH_TOKEN }}" \
             --rm ${{ env.TEST_TAG }}
 
   test-action:
@@ -65,11 +99,34 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Test Local Action
-        id: test-action
+        id: register
         uses: ./
         with:
-          who-to-greet: Mona Lisa Octocat
+          org-name: dpetest
+          schema-dir: tests/schema_dir
+          synapse-auth-token: ${{ secrets.SYNAPSE_AUTH_TOKEN }}
 
-      - name: Print Output
-        id: output
-        run: echo "${{ steps.test-action.outputs.greeting }}"
+
+  test-workflow:
+    name: GitHub Workflow Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v6
+
+      - name: Generate JSON Schemas
+        id: generate
+        uses: Sage-Bionetworks-Actions/generate-jsonschema@main
+        with:
+          data-model-source: ./tests/data_model.csv
+          data-model-labels: "display_label"
+
+      - name: Register JSON Schemas
+        id: register
+        uses: ./
+        with:
+          org-name: dpetest
+          schema-dir: ${{ steps.generate.outputs.schemas}}
+          synapse-auth-token: ${{ secrets.SYNAPSE_AUTH_TOKEN }}
