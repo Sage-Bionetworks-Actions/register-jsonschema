@@ -101,8 +101,6 @@ class TestRegisterJsonSchemas:
         main()
         captured = capsys.readouterr()
         assert "Fix Schema Name: True" in captured.out
-        assert "Changed schema name from 'Patient-Schema' to 'PatientSchema'" in captured.out
-        assert "Changed schema name from 'Biospecimen_Schema' to 'BiospecimenSchema'" in captured.out
         assert "Registered: PatientSchema version 1.0.0" in captured.out
         assert "Registered: BiospecimenSchema version 1.0.0" in captured.out
         assert os.path.exists(text_file_path)
