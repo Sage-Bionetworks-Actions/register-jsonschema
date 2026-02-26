@@ -95,7 +95,11 @@ class TestRegisterJsonSchemas:
         assert os.path.exists(text_file_path)
 
     def test_success_fix_schema_name(self, monkeypatch,  capsys, text_file_path: str) -> None:
-        """Integration test for registering JSON schemas from a directory."""
+        """
+        Integration test for registering JSON schemas from a directory.
+        This test verifies that when the FIX_SCHEMA_NAME environment variable is set to "true"
+        the schema names are fixed by replacing dashes and underscores with periods.
+        """
         monkeypatch.setenv('FIX_SCHEMA_NAME', "true")
         monkeypatch.setenv('SCHEMA_DIR', './tests/schema_dir_bad_names')
         main()
