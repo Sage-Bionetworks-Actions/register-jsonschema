@@ -27,12 +27,19 @@ def main() -> None:
     - VERSION: Semantic version (e.g., '1.0.0')
     - GITHUB_OUTPUT: JSON schema URIs will be appended to this
         file in GitHub Actions output format.
+    - FIX_SCHEMA_NAME: If True, fixes the schema name to meet Synapse
+        requirements by replacing dashes and underscores with periods.
     """
     org_name = os.environ.get("ORG_NAME")
     schema_dir = os.environ.get("SCHEMA_DIR")
     github_output = os.environ.get('GITHUB_OUTPUT', None)
     synapse_pat = os.environ.get("SYNAPSE_AUTH_TOKEN", None)
     version = os.environ.get("VERSION", None)
+    fix_schema_name_str = os.environ.get("FIX_SCHEMA_NAME", "false").lower()
+    if fix_schema_name_str == 'true':
+        fix_schema_name = True
+    else:
+        fix_schema_name = False
 
     syn = Synapse()
     syn.login()
@@ -48,6 +55,7 @@ def main() -> None:
     print(f"\n{'='*60}")
     print("JSON Schema Registration")
     print(f"{'='*60}")
+    print(f"Fix Schema Name: {fix_schema_name}")
     if synapse_pat:
         print("Synapse PAT is set")
     else:
@@ -86,7 +94,9 @@ def main() -> None:
 
     results = []
     for json_file in sorted(json_files):
-        result = register_schema(syn, json_file, org_name, version)
+        result = register_schema(
+            syn, json_file, org_name, version, fix_schema_name
+        )
         results.append(result)
 
         if result:
@@ -114,7 +124,10 @@ def main() -> None:
 
 
 def register_schema(
-    syn: Synapse, json_file: Path, org_name: str, version: str | None
+    syn: Synapse,
+    json_file: Path,
+    org_name: str, version: str | None,
+    fix_schema_name: bool = False
 ) -> JSONSchema:
     """
     Register a single JSON schema to Synapse.
@@ -124,6 +137,8 @@ def register_schema(
         json_file: Path to JSON schema file
         org_name: Organization name
         version: Semantic version (e.g., '1.0.0')
+        fix_schema_name: If True, fixes the schema name to meet Synapse
+          requirements by replacing dashes and underscores with periods.
 
     Returns:
         JSONSchema object if successful
@@ -142,7 +157,8 @@ def register_schema(
             organization_name=org_name,
             schema_name=schema_name,
             schema_version=version,
-            synapse_client=syn
+            synapse_client=syn,
+            fix_schema_name=fix_schema_name,
         )
 
         print(f"✓ Registered: {schema_name} version {str(version)}")

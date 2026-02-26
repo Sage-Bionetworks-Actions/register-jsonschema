@@ -78,6 +78,7 @@ class TestRegisterJsonSchemas:
         """Integration test for registering JSON schemas from a directory."""
         main()
         captured = capsys.readouterr()
+        assert "Fix Schema Name: False" in captured.out
         assert "Registered: Patient version 1.0.0" in captured.out
         assert "Registered: Biospecimen version 1.0.0" in captured.out
         assert os.path.exists(text_file_path)
@@ -91,6 +92,16 @@ class TestRegisterJsonSchemas:
         captured = capsys.readouterr()
         assert "Registered: Patient version None" in captured.out
         assert "Registered: Biospecimen version None" in captured.out
+        assert os.path.exists(text_file_path)
+
+    def test_success_fix_schema_name(self, monkeypatch,  capsys, text_file_path: str) -> None:
+        """Integration test for registering JSON schemas from a directory."""
+        monkeypatch.setenv('FIX_SCHEMA_NAME', "true")
+        main()
+        captured = capsys.readouterr()
+        assert "Fix Schema Name: True" in captured.out
+        assert "Registered: Patient version 1.0.0" in captured.out
+        assert "Registered: Biospecimen version 1.0.0" in captured.out
         assert os.path.exists(text_file_path)
 
     def test_no_org_env_var(self, monkeypatch, capsys) -> None:
