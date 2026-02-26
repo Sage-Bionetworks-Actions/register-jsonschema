@@ -101,8 +101,8 @@ class TestRegisterJsonSchemas:
         main()
         captured = capsys.readouterr()
         assert "Fix Schema Name: True" in captured.out
-        assert "Registered: PatientSchema version 1.0.0" in captured.out
-        assert "Registered: BiospecimenSchema version 1.0.0" in captured.out
+        assert "Registered: Patient.Schema version 1.0.0" in captured.out
+        assert "Registered: Biospecimen.Schema version 1.0.0" in captured.out
         assert os.path.exists(text_file_path)
 
     def test_no_org_env_var(self, monkeypatch, capsys) -> None:
