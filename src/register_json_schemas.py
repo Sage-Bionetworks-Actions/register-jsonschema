@@ -161,7 +161,7 @@ def register_schema(
             fix_schema_name=fix_schema_name,
         )
 
-        print(f"✓ Registered: {schema_name} version {str(version)}")
+        print(f"✓ Registered: {schema.name} version {str(version)}")
         return schema
 
     except Exception as e:
