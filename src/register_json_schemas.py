@@ -35,11 +35,7 @@ def main() -> None:
     github_output = os.environ.get('GITHUB_OUTPUT', None)
     synapse_pat = os.environ.get("SYNAPSE_AUTH_TOKEN", None)
     version = os.environ.get("VERSION", None)
-    fix_schema_name_str = os.environ.get("FIX_SCHEMA_NAME", "false").lower()
-    if fix_schema_name_str == 'true':
-        fix_schema_name = True
-    else:
-        fix_schema_name = False
+    fix_schema_name = os.environ.get("FIX_SCHEMA_NAME", "false").lower() == "true"
 
     syn = Synapse()
     syn.login()
