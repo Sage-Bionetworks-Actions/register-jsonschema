@@ -97,12 +97,14 @@ class TestRegisterJsonSchemas:
     def test_success_fix_schema_name(self, monkeypatch,  capsys, text_file_path: str) -> None:
         """Integration test for registering JSON schemas from a directory."""
         monkeypatch.setenv('FIX_SCHEMA_NAME', "true")
-        monkeypatch.setenv('VERSION', 'v2.0.0')
+        monkeypatch.setenv('SCHEMA_DIR', './tests/schema_dir_bad_names')
         main()
         captured = capsys.readouterr()
         assert "Fix Schema Name: True" in captured.out
-        assert "Registered: Patient version 2.0.0" in captured.out
-        assert "Registered: Biospecimen version 2.0.0" in captured.out
+        assert "Changed schema name from 'Patient-Schema' to 'PatientSchema'" in captured.out
+        assert "Changed schema name from 'Biospecimen_Schema' to 'BiospecimenSchema'" in captured.out
+        assert "Registered: PatientSchema version 1.0.0" in captured.out
+        assert "Registered: BiospecimenSchema version 1.0.0" in captured.out
         assert os.path.exists(text_file_path)
 
     def test_no_org_env_var(self, monkeypatch, capsys) -> None:
