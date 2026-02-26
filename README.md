@@ -27,6 +27,7 @@ steps:
 | `schema-dir` | Path to directory containing JSON schema files. | `true` |
 | `version` | Semantic version of the schemas being registered. | `false` |
 | `synapse-auth-token` | Synapse Personal Access Token with permissions to register schemas in the Synapse organization. | `true` |
+| `fix-schema-name` | If True, fixes the schema name to meet Synapse requirements by replacing dashes and underscores with periods. | `false` |
 
 ## Outputs
 

@@ -101,7 +101,7 @@ class TestRegisterJsonSchemas:
         the schema names are fixed by replacing dashes and underscores with periods.
         """
         monkeypatch.setenv('FIX_SCHEMA_NAME', "true")
-        monkeypatch.setenv('SCHEMA_DIR', './tests/schema_dir_bad_names')
+        monkeypatch.setenv('SCHEMA_DIR', './tests/schema_dir_invalid_names')
         main()
         captured = capsys.readouterr()
         assert "Fix Schema Name: True" in captured.out
