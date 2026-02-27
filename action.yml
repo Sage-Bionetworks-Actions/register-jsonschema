@@ -19,6 +19,9 @@ inputs:
   synapse-auth-token:
     description: 'Synapse Personal Access Token with permissions to register schemas in the Synapse organization'
     required: true
+  fix-schema-name:
+    description: 'If true, fixes the schema name to meet Synapse requirements by replacing dashes and underscores with periods. Defaults to False'
+    required: false
 
 outputs:
   uris:
@@ -32,3 +35,4 @@ runs:
     VERSION: ${{ inputs.version }}
     SCHEMA_DIR: ${{ inputs.schema-dir }}
     SYNAPSE_AUTH_TOKEN: ${{ inputs.synapse-auth-token }}
+    FIX_SCHEMA_NAME: ${{ inputs.fix-schema-name }}
