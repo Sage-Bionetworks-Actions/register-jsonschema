@@ -1,5 +1,5 @@
 # Using develop branch for register json schema function
-FROM ghcr.io/sage-bionetworks/synapsepythonclient:develop-486a9fc457d4fae8b54c9823fc195c3b38ae3eb9
+FROM ghcr.io/sage-bionetworks/synapsepythonclient:develop-5ca3142c4a42a70a22302b722b1a26582bc306aa
 
 # Copy requirements and install dependencies
 RUN pip install --no-cache-dir synapseclient[curator]
