@@ -3,7 +3,7 @@ import sys
 import os
 from pathlib import Path
 import pytest
-from synapseclient.models import SchemaOrganization
+from synapseclient.models import Organization
 from synapseclient import Synapse
 sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
 from register_json_schemas import main
@@ -18,10 +18,10 @@ def synapse_client() -> Synapse:
 
 
 @pytest.fixture(scope="module")
-def schema_organization(request, synapse_client: Synapse) -> SchemaOrganization:
+def organization(request, synapse_client: Synapse) -> Organization:
     """Create a test organization for schema registration."""
     org_name = f"test.org.id{str(uuid.uuid4())[:8]}"
-    organization = SchemaOrganization(org_name)
+    organization = Organization(org_name)
     organization.store(synapse_client=synapse_client)
 
     def cleanup():
@@ -66,10 +66,10 @@ class TestRegisterJsonSchemas:
     def init(
         self,
         monkeypatch,
-        schema_organization: SchemaOrganization,
+        organization: Organization,
         text_file_path: str
     ) -> None:
-        monkeypatch.setenv('ORG_NAME', schema_organization.name)
+        monkeypatch.setenv('ORG_NAME', organization.name)
         monkeypatch.setenv('VERSION', 'v1.0.0')
         monkeypatch.setenv('SCHEMA_DIR', './tests/schema_dir')
         monkeypatch.setenv('GITHUB_OUTPUT', text_file_path)
