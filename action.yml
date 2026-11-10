@@ -1,5 +1,5 @@
 name: Register JSON Schema
-description: Register JSON Schema files with Synapse using the Synapse Python client. This action is intended to be used in conjunction with the Generate JSON Schemas action, which generates JSON Schema files from a data model and outputs the path to the generated schema files as well as a JSON string containing an array of schema dictionaries for use with PR comment actions.
+description: Register JSON Schema files with Synapse using the Synapse Python client.
 author: Sage Bionetworks
 
 branding:
