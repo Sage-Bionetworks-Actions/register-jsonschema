@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 from synapseclient import Synapse
-from synapseclient.models import JSONSchema, SchemaOrganization
+from synapseclient.models import JSONSchema, Organization
 from synapseclient.extensions.curator import register_jsonschema
 
 
@@ -65,7 +65,7 @@ def main() -> None:
         version = version[1:]
 
     try:
-        org = SchemaOrganization(name=org_name)
+        org = Organization(name=org_name)
         org.get(synapse_client=syn)
         print(f"✓ Organization found: {org_name}\n")
     except Exception as e:

@@ -16,24 +16,62 @@ jobs:
   test-code:
     name: Tests
     runs-on: ubuntu-latest
+    env:
+      # Must match the Python version in the Dockerfile base image.
+      # The "Check Python version" step fails if they differ.
+      PYTHON_VERSION: "3.15"
 
     steps:
       - name: Checkout
         id: checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
 
+      - name: Read base image from Dockerfile
+        run: |
+          # Parse the FROM line one time. Accept only a release tag
+          # (vX.Y.Z), with an optional @sha256 digest.
+          FROM_LINE=$(grep -m1 '^FROM ' Dockerfile || true)
+          IMG='ghcr\.io/sage-bionetworks/synapsepythonclient'
+          VER='([0-9]+\.[0-9]+\.[0-9]+)'
+          DIGEST='(@sha256:[0-9a-f]{64})?'
+          RE="^FROM (${IMG}:v${VER}${DIGEST})( |$)"
+          if [[ ! "$FROM_LINE" =~ $RE ]]; then
+            echo "::error::Could not read a release synapseclient image" \
+              "from Dockerfile (got '$FROM_LINE'). Expected a line like" \
+              "'FROM ghcr.io/sage-bionetworks/synapsepythonclient:vX.Y.Z'" \
+              "with an optional '@sha256:<digest>'"
+            exit 1
+          fi
+          BASE_IMAGE=${BASH_REMATCH[1]}
+          SYN_VERSION=${BASH_REMATCH[2]}
+          echo "Base image: $BASE_IMAGE"
+          echo "synapseclient version: $SYN_VERSION"
+          echo "BASE_IMAGE=$BASE_IMAGE" >> "$GITHUB_ENV"
+          echo "SYN_VERSION=$SYN_VERSION" >> "$GITHUB_ENV"
+
+      - name: Check Python version matches base image
+        run: |
+          IMAGE_PY=$(docker run --rm --entrypoint python "$BASE_IMAGE" \
+            -c 'import sys; print("%d.%d" % sys.version_info[:2])')
+          echo "Base image Python: $IMAGE_PY, CI Python: $PYTHON_VERSION"
+          if [ "$IMAGE_PY" != "$PYTHON_VERSION" ]; then
+            echo "::error::CI PYTHON_VERSION ($PYTHON_VERSION) does not" \
+              "match the base image Python ($IMAGE_PY). Update" \
+              "PYTHON_VERSION in ci.yml."
+            exit 1
+          fi
+
       - name: Setup Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
-          python-version: "3.11"
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
-        # install version with reigster json schema function
-        # install curator packages
         run: |
+          # SYN_VERSION comes from the "Read base image" step
           python -m pip install --upgrade pip
-          pip install git+https://github.com/Sage-Bionetworks/synapsePythonClient@5ca3142c4a42a70a22302b722b1a26582bc306aa
-          pip install pytest inflection networkx pandarallel pandas rdflib
+          pip install "synapseclient[curator]==${SYN_VERSION}"
+          pip install -r requirements.txt
 
       - name: Run Tests
         env:
