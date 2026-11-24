@@ -1,5 +1,11 @@
 # Register JSON Schema
 
+> [!WARNING]
+>
+> **This action is deprecated.** Use the action in
+> [Sage-Bionetworks/synapse-actions](https://github.com/Sage-Bionetworks/synapse-actions)
+> instead. This action will not get new features or fixes.
+
 [![Continuous Integration](https://github.com/Sage-Bionetworks-Actions/register-jsonschema/actions/workflows/ci.yml/badge.svg)](https://github.com/Sage-Bionetworks-Actions/register-jsonschema/actions/workflows/ci.yml)
 
 Register JSON Schema files with Synapse using the Synapse Python client.
